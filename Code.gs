@@ -5,7 +5,7 @@
 //  OVERVIEW:
 //  This script maintains an auto-syncing knowledge base between a Google Drive
 //  folder and a Google NotebookLM Enterprise notebook. It is split into two
-//  independent workers that run on a nightly schedule:
+//  independent workers that run on a predefined schedule:
 //
 //    Worker A (runReplicatorOnly) — Scans the source Drive folder, applies
 //    AI-generated names via the Gemini API, and copies/renames files into a
@@ -22,28 +22,28 @@
 
 // --- CONFIGURATION ---
 // Replace each placeholder with your actual values before running.
-const GCP_PROJECT_NUMBER = "GCP_PROJECT_NUMBER";   // GCP project where Discovery Engine API is enabled
+const GCP_PROJECT_NUMBER = "GCP_PROJECT_NUMBER";   // GCP project where Discovery Engine API is enabled & NotebookLM notebook created
 const NOTEBOOK_ID        = "NOTEBOOK_ID";           // UUID of your NotebookLM notebook (from its URL)
-const SOURCE_MASTER_ID   = "SOURCE_MASTER_ID";      // Google Drive ID of your source folder
-const STAGING_FOLDER_ID  = "STAGING_FOLDER_ID";     // Google Drive ID of your hidden staging folder
+const SOURCE_MASTER_ID   = "SOURCE_MASTER_ID";      // Google Drive ID of your source folder (from its URL)
+const STAGING_FOLDER_ID  = "STAGING_FOLDER_ID";     // Google Drive ID of your hidden staging folder (from its URL)
 const GEMINI_API_KEY     = "GEMINI_API_KEY";        // Gemini API key from Google AI Studio (used for smart naming)
 const RECIPIENT_EMAIL    = "RECIPIENT_EMAIL";       // Email address to receive daily execution reports
 
 // AI Configuration
 // GEMINI_MODEL: the model used for smart file naming. Update to a current
 // public model (e.g. "gemini-2.0-flash") before deploying.
-const GEMINI_MODEL   = "gemini-2.0-flash";
+const GEMINI_MODEL   = "gemini-3-flash-preview";         // Replace this if nneeded
 const GEMINI_VERSION = "v1beta";
 
 // System Limits
 const LOCATION          = "global";           // NotebookLM Enterprise API location
-const TOTAL_LENGTH_LIMIT = 65;                // Max character length for AI-generated source names in NotebookLM
+const TOTAL_LENGTH_LIMIT = 65;                // Max character length for AI-generated source file names in NotebookLM
 const MAX_RUNTIME_MS     = 25 * 60 * 1000;   // 25-minute hard cap — matches Google Apps Script execution limit
 const UPLOAD_BATCH_SIZE  = 2;                 // Number of files uploaded per API call. Keep low to avoid timeouts.
 
 // Supported MIME types for NotebookLM ingestion.
 // Files with types not in this list are automatically skipped by the pipeline.
-// Note: native Google Sheets, Forms, and Sites are NOT supported by the NotebookLM Enterprise API.
+// Note: you may need to update this list as NotebookLM keeps evolving.
 const ALLOWED_MIME_TYPES = [
   "application/vnd.google-apps.document",       // Google Docs
   "application/vnd.google-apps.presentation",   // Google Slides
@@ -58,7 +58,7 @@ const ALLOWED_MIME_TYPES = [
 
 
 // ==========================================
-// WORKER A: THE REPLICATOR (runs ~1:00 AM)
+// WORKER A: THE REPLICATOR (e.g. runs ~1:00 AM)
 // ==========================================
 // Responsibilities:
 //  - Scans the source Drive folder (including subfolders and shortcuts)
