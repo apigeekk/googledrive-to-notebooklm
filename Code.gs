@@ -318,7 +318,7 @@ function runSyncOnly() {
     console.log(`📊 [DELTA] To Delete: ${toDelete.length} | To Upload: ${toUpload.length}`);
 
     // --- STEP 5: Deletions ---
-    // Remove stale sources from NotebookLM in batches of 50 (API limit).
+    // Remove stale sources from NotebookLM in batches of 50.
     if (toDelete.length > 0) {
       for (let i = 0; i < toDelete.length; i += 50) {
         if ((new Date().getTime() - startTime) > MAX_RUNTIME_MS) break;
