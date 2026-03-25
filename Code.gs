@@ -1,6 +1,6 @@
 // ==========================================
-//      ENTERPRISE KNOWLEDGE BASE SYNC
-//      (Production v1.4 - Fully Decoupled Emails)
+//    ENTERPRISE KNOWLEDGE BASE SYNC WITH GOOGLE NOTEBOOKLM
+//    
 //
 //  OVERVIEW:
 //  This script maintains an auto-syncing knowledge base between a Google Drive
