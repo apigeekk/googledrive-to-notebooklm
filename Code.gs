@@ -225,7 +225,7 @@ function runReplicatorOnly() {
 
 
 // ==========================================
-// WORKER B: THE SYNC MOVER (runs ~2:00 AM)
+// WORKER B: THE SYNC MOVER (e.g. runs ~2:00 AM)
 // ==========================================
 // Responsibilities:
 //  - Reads the current state of the staging folder (the source of truth)
